@@ -11,8 +11,15 @@ const (
 	IDENT = "IDENT"
 	INT   = "INT"
 
-	ASSIGN = "ASSIGN"
-	PLUS   = "PLUS"
+	ASSIGN   = "ASSIGN"
+	PLUS     = "PLUS"
+	MINUS    = "MINUS"
+	BANG     = "BANG"
+	ASTERISK = "ASTERISK"
+	SLASH    = "/"
+
+	LT = "LT"
+	GT = "GT"
 
 	COMMA     = "COMMA"
 	SEMICOLON = "SEMICOLON"
@@ -37,6 +44,12 @@ var symbol = map[string]Type{
 	"+": PLUS,
 	"{": LBRACE,
 	"}": RBRACE,
+	"!": BANG,
+	"-": MINUS,
+	"*": ASTERISK,
+	"/": SLASH,
+	"<": LT,
+	">": GT,
 }
 
 var keyword = map[string]Type{
