@@ -34,7 +34,10 @@ func (l *Lexer) peekChar() byte {
 func (l *Lexer) backtrack() {
 	l.position -= 1
 	l.readPosition -= 1
-	l.ch = l.input[l.position]
+	l.eof = false
+	if l.position > 0 {
+		l.ch = l.input[l.position]
+	}
 }
 
 func (l *Lexer) readWord() string {
