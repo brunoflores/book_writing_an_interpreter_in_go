@@ -1,5 +1,9 @@
 package token
 
+import (
+	"strconv"
+)
+
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
@@ -22,25 +26,41 @@ const (
 	LET      = "LET"
 )
 
-var fromString = map[byte]TokenType{
-	'=': ASSIGN,
-	';': SEMICOLON,
-	'(': LPAREN,
-	')': RPAREN,
-	',': COMMA,
-	'+': PLUS,
-	'{': LBRACE,
-	'}': RBRACE,
-	0:   EOF,
+type Type string
+
+var symbol = map[string]Type{
+	"=": ASSIGN,
+	";": SEMICOLON,
+	"(": LPAREN,
+	")": RPAREN,
+	",": COMMA,
+	"+": PLUS,
+	"{": LBRACE,
+	"}": RBRACE,
 }
 
-type TokenType string
+var keyword = map[string]Type{
+	"let": LET,
+	"fn":  FUNCTION,
+}
 
 type Token struct {
-	Type    TokenType
-	Literal string
+	Symbol  Type
+	Keyword Type
+	Ident   string
+	Literal int
 }
 
-func New(ch byte) Token {
-	return Token{Type: fromString[ch], Literal: string(ch)}
+func New(word string) Token {
+	if s, ok := symbol[word]; ok {
+		return Token{Symbol: s}
+	} else if k, ok := keyword[word]; ok {
+		return Token{Keyword: k}
+	} else {
+		i, err := strconv.Atoi(word)
+		if err != nil {
+			return Token{Ident: word}
+		}
+		return Token{Literal: i}
+	}
 }
