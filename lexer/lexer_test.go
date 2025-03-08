@@ -18,6 +18,12 @@ let add = fn(x, y) {
 let result = add(five, ten);
 !-/5;
 5 < 10 > 5;
+
+if (5 < 10) {
+  return true;
+} else {
+  return false;
+}
 `
 
 	tests := []token.Token{
@@ -68,6 +74,23 @@ let result = add(five, ten);
 		{Symbol: token.GT},
 		{Literal: 5},
 		{Symbol: token.SEMICOLON},
+		{Keyword: token.IF},
+		{Symbol: token.LPAREN},
+		{Literal: 5},
+		{Symbol: token.LT},
+		{Literal: 10},
+		{Symbol: token.RPAREN},
+		{Symbol: token.LBRACE},
+		{Keyword: token.RETURN},
+		{Keyword: token.TRUE},
+		{Symbol: token.SEMICOLON},
+		{Symbol: token.RBRACE},
+		{Keyword: token.ELSE},
+		{Symbol: token.LBRACE},
+		{Keyword: token.RETURN},
+		{Keyword: token.FALSE},
+		{Symbol: token.SEMICOLON},
+		{Symbol: token.RBRACE},
 		{Symbol: token.EOF},
 	}
 

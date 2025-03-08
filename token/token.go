@@ -31,6 +31,11 @@ const (
 
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 type Type string
@@ -53,8 +58,13 @@ var symbol = map[string]Type{
 }
 
 var keyword = map[string]Type{
-	"let": LET,
-	"fn":  FUNCTION,
+	"let":    LET,
+	"fn":     FUNCTION,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 type Token struct {
