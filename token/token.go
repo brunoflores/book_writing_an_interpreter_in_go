@@ -18,8 +18,10 @@ const (
 	ASTERISK = "ASTERISK"
 	SLASH    = "/"
 
-	LT = "LT"
-	GT = "GT"
+	LT     = "LT"
+	GT     = "GT"
+	EQ     = "EQ"
+	NOT_EQ = "NOT_EQ"
 
 	COMMA     = "COMMA"
 	SEMICOLON = "SEMICOLON"
@@ -41,20 +43,22 @@ const (
 type Type string
 
 var symbol = map[string]Type{
-	"=": ASSIGN,
-	";": SEMICOLON,
-	"(": LPAREN,
-	")": RPAREN,
-	",": COMMA,
-	"+": PLUS,
-	"{": LBRACE,
-	"}": RBRACE,
-	"!": BANG,
-	"-": MINUS,
-	"*": ASTERISK,
-	"/": SLASH,
-	"<": LT,
-	">": GT,
+	"=":  ASSIGN,
+	"==": EQ,
+	"!=": NOT_EQ,
+	";":  SEMICOLON,
+	"(":  LPAREN,
+	")":  RPAREN,
+	",":  COMMA,
+	"+":  PLUS,
+	"{":  LBRACE,
+	"}":  RBRACE,
+	"!":  BANG,
+	"-":  MINUS,
+	"*":  ASTERISK,
+	"/":  SLASH,
+	"<":  LT,
+	">":  GT,
 }
 
 var keyword = map[string]Type{
@@ -85,5 +89,13 @@ func New(word string) Token {
 			return Token{Ident: word}
 		}
 		return Token{Literal: i}
+	}
+}
+
+func NewSymbol(word string) Token {
+	if s, ok := symbol[word]; ok {
+		return Token{Symbol: s}
+	} else {
+		return Token{Symbol: ILLEGAL}
 	}
 }

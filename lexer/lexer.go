@@ -23,6 +23,20 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
+func (l *Lexer) backtrack() {
+	l.position -= 1
+	l.readPosition -= 1
+	l.ch = l.input[l.position]
+}
+
 func (l *Lexer) readWord() string {
 	position := l.position
 	for isLetter(l.ch) && !l.eof {
@@ -39,8 +53,16 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
+func (l *Lexer) readSymbol() string {
+	position := l.position
+	for !isLetter(l.ch) && !isDigit(l.ch) && !isWhitespace(l.ch) && !l.eof {
+		l.readChar()
+	}
+	return l.input[position:l.position]
+}
+
 func (l *Lexer) skipWhitespace() {
-	for (l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r') && !l.eof {
+	for isWhitespace(l.ch) && !l.eof {
 		l.readChar()
 	}
 }
@@ -58,8 +80,18 @@ func (l *Lexer) NextToken() token.Token {
 	} else if isDigit(b) {
 		return token.New(l.readNumber())
 	} else {
-		defer l.readChar()
-		return token.New(string(b))
+		word := l.readSymbol()
+		step := len(word)
+		var s token.Token
+		for step > 0 {
+			s = token.NewSymbol(word[0:step])
+			if s.Symbol != token.ILLEGAL {
+				return s
+			}
+			step -= 1
+			l.backtrack()
+		}
+		return s
 	}
 }
 
@@ -75,4 +107,8 @@ func isLetter(ch byte) bool {
 
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
+}
+
+func isWhitespace(ch byte) bool {
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
 }

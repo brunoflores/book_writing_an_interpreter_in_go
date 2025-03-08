@@ -24,6 +24,9 @@ if (5 < 10) {
 } else {
   return false;
 }
+
+10 == 10;
+10 != 9;
 `
 
 	tests := []token.Token{
@@ -91,6 +94,14 @@ if (5 < 10) {
 		{Keyword: token.FALSE},
 		{Symbol: token.SEMICOLON},
 		{Symbol: token.RBRACE},
+		{Literal: 10},
+		{Symbol: token.EQ},
+		{Literal: 10},
+		{Symbol: token.SEMICOLON},
+		{Literal: 10},
+		{Symbol: token.NOT_EQ},
+		{Literal: 9},
+		{Symbol: token.SEMICOLON},
 		{Symbol: token.EOF},
 	}
 
