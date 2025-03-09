@@ -62,7 +62,6 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 		return nil
 	}
 
-	// stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal()}
 	switch ident := p.curToken.(type) {
 	case token.Ident:
 		stmt.Name = &ast.Identifier{Token: ident, Value: ident.Name}
@@ -81,14 +80,6 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 	return &stmt
 }
-
-// func (p *Parser) curTokenIs(ty token.Type) bool {
-// 	return p.curToken.Type() == ty
-// }
-
-// func (p *Parser) peekTokenIs(ty token.Type) bool {
-// 	return p.peekToken.Type() == ty
-// }
 
 func (p *Parser) expectPeek(tok token.Ty) bool {
 	if token.Is(p.peekToken, tok) {
