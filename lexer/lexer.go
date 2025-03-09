@@ -63,10 +63,11 @@ func (l *Lexer) peekChar() byte {
 }
 
 func (l *Lexer) backtrack() {
-	l.cch -= 1
-	l.eof = false
-	if l.cch > 0 {
-		l.ch = l.buf[l.cch]
+	if l.cbuf > 0 {
+		l.cbuf -= 1
+		l.cch -= 1
+		l.eof = false
+		l.ch = l.buf[l.cbuf]
 	}
 }
 
