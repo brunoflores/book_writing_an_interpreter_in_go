@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"strings"
 	"testing"
 
 	"interpreter/token"
@@ -120,7 +121,8 @@ if (5 < 10) {
 	// {Symbol: token.SEMICOLON},
 	// {Symbol: token.EOF},
 
-	l := New(input)
+	reader := strings.NewReader(input)
+	l := New(reader, "-")
 	for i, tt := range tests {
 		tok := l.NextToken()
 		tt(t, i, tok)

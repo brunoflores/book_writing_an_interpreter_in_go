@@ -2,6 +2,8 @@ package parser
 
 import (
 	"interpreter/lexer"
+
+	"strings"
 	"testing"
 )
 
@@ -11,7 +13,8 @@ let x = 5;
 let y = 10;
 `
 
-	l := lexer.New(input)
+	reader := strings.NewReader(input)
+	l := lexer.New(reader, "-")
 	p := New(l)
 
 	program := p.ParseProgram()

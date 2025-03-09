@@ -6,6 +6,7 @@ import (
 	"interpreter/lexer"
 	"interpreter/token"
 	"io"
+	"strings"
 )
 
 const prompt = ">> "
@@ -19,9 +20,15 @@ func Start(in io.Reader, out io.Writer) {
 			return
 		}
 		line := scanner.Text()
-		l := lexer.New(line)
-		for tok := l.NextToken(); !token.Is(tok, token.Symbol{Id: token.EOF}); tok = l.NextToken() {
+		reader := strings.NewReader(line)
+		l := lexer.New(reader, "-")
+		for {
+			tok := l.NextToken()
 			fmt.Printf("%+v\n", tok)
+
+			if token.Is(tok, token.Symbol{Id: token.EOF}) {
+				break
+			}
 		}
 	}
 }

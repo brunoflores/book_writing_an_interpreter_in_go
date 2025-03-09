@@ -41,12 +41,23 @@ const (
 	RETURN   = "RETURN"
 )
 
+type position struct {
+	lnum  int
+	cnum  int
+	fname string
+}
+
+func NewPosition(cnum, lnum int, fname string) position {
+	return position{cnum: cnum, lnum: lnum, fname: fname}
+}
+
 type Ty interface {
 	ty()
 }
 
 type Symbol struct {
 	Id string
+	position
 }
 
 func (s Symbol) ty() {}
@@ -56,6 +67,7 @@ func (s Symbol) equal(this Symbol) bool {
 
 type Keyword struct {
 	Name string
+	position
 }
 
 func (k Keyword) ty() {}
@@ -65,6 +77,7 @@ func (k Keyword) equal(this Keyword) bool {
 
 type Ident struct {
 	Name string
+	position
 }
 
 func (i Ident) ty() {}
@@ -74,6 +87,7 @@ func (i Ident) equal(this Ident) bool {
 
 type LiteralString struct {
 	String string
+	position
 }
 
 func (s LiteralString) ty() {}
@@ -83,6 +97,7 @@ func (s LiteralString) equal(this LiteralString) bool {
 
 type LiteralInt struct {
 	Int int
+	position
 }
 
 func (i LiteralInt) ty() {}
@@ -120,25 +135,25 @@ var keyword = map[string]string{
 	"return": RETURN,
 }
 
-func New(word string) Ty {
+func New(word string, pos position) Ty {
 	if s, ok := symbol[word]; ok {
-		return Symbol{Id: s}
+		return Symbol{Id: s, position: pos}
 	} else if k, ok := keyword[word]; ok {
-		return Keyword{Name: k}
+		return Keyword{Name: k, position: pos}
 	} else {
 		i, err := strconv.Atoi(word)
 		if err != nil {
-			return Ident{Name: word}
+			return Ident{Name: word, position: pos}
 		}
-		return LiteralInt{Int: i}
+		return LiteralInt{Int: i, position: pos}
 	}
 }
 
-func NewSymbol(word string) Ty {
+func NewSymbol(word string, pos position) Ty {
 	if s, ok := symbol[word]; ok {
-		return Symbol{Id: s}
+		return Symbol{Id: s, position: pos}
 	} else {
-		return Symbol{Id: ILLEGAL}
+		return Symbol{Id: ILLEGAL, position: pos}
 	}
 }
 
