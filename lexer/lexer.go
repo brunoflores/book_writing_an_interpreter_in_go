@@ -70,11 +70,11 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
-func (l *Lexer) NextToken() token.Token {
+func (l *Lexer) NextToken() token.Ty {
 	l.skipWhitespace()
 
 	if l.eof {
-		return token.Token{Symbol: token.EOF}
+		return token.NewSymbol("eof")
 	}
 
 	b := l.ch
@@ -85,10 +85,10 @@ func (l *Lexer) NextToken() token.Token {
 	} else {
 		word := l.readSymbol()
 		step := len(word)
-		var s token.Token
+		var s token.Ty
 		for step > 0 {
 			s = token.NewSymbol(word[0:step])
-			if s.Symbol != token.ILLEGAL {
+			if !token.Is(s, token.Symbol{Id: token.ILLEGAL}) {
 				return s
 			}
 			step -= 1

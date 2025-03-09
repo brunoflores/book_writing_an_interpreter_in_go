@@ -8,8 +8,9 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDENT = "IDENT"
-	INT   = "INT"
+	IDENT  = "IDENT"
+	INT    = "INT"
+	STRING = "STRING"
 
 	ASSIGN   = "ASSIGN"
 	PLUS     = "PLUS"
@@ -40,28 +41,76 @@ const (
 	RETURN   = "RETURN"
 )
 
-type Type string
-
-var symbol = map[string]Type{
-	"=":  ASSIGN,
-	"==": EQ,
-	"!=": NOT_EQ,
-	";":  SEMICOLON,
-	"(":  LPAREN,
-	")":  RPAREN,
-	",":  COMMA,
-	"+":  PLUS,
-	"{":  LBRACE,
-	"}":  RBRACE,
-	"!":  BANG,
-	"-":  MINUS,
-	"*":  ASTERISK,
-	"/":  SLASH,
-	"<":  LT,
-	">":  GT,
+type Ty interface {
+	ty()
 }
 
-var keyword = map[string]Type{
+type Symbol struct {
+	Id string
+}
+
+func (s Symbol) ty() {}
+func (s Symbol) equal(this Symbol) bool {
+	return s.Id == this.Id
+}
+
+type Keyword struct {
+	Name string
+}
+
+func (k Keyword) ty() {}
+func (k Keyword) equal(this Keyword) bool {
+	return k.Name == this.Name
+}
+
+type Ident struct {
+	Name string
+}
+
+func (i Ident) ty() {}
+func (i Ident) equal(this Ident) bool {
+	return i.Name == this.Name
+}
+
+type LiteralString struct {
+	String string
+}
+
+func (s LiteralString) ty() {}
+func (s LiteralString) equal(this LiteralString) bool {
+	return s.String == this.String
+}
+
+type LiteralInt struct {
+	Int int
+}
+
+func (i LiteralInt) ty() {}
+func (i LiteralInt) equal(this LiteralInt) bool {
+	return i.Int == this.Int
+}
+
+var symbol = map[string]string{
+	"=":   ASSIGN,
+	"==":  EQ,
+	"!=":  NOT_EQ,
+	";":   SEMICOLON,
+	"(":   LPAREN,
+	")":   RPAREN,
+	",":   COMMA,
+	"+":   PLUS,
+	"{":   LBRACE,
+	"}":   RBRACE,
+	"!":   BANG,
+	"-":   MINUS,
+	"*":   ASTERISK,
+	"/":   SLASH,
+	"<":   LT,
+	">":   GT,
+	"eof": EOF,
+}
+
+var keyword = map[string]string{
 	"let":    LET,
 	"fn":     FUNCTION,
 	"true":   TRUE,
@@ -71,31 +120,55 @@ var keyword = map[string]Type{
 	"return": RETURN,
 }
 
-type Token struct {
-	Symbol  Type
-	Keyword Type
-	Ident   string
-	Literal int
-}
-
-func New(word string) Token {
+func New(word string) Ty {
 	if s, ok := symbol[word]; ok {
-		return Token{Symbol: s}
+		return Symbol{Id: s}
 	} else if k, ok := keyword[word]; ok {
-		return Token{Keyword: k}
+		return Keyword{Name: k}
 	} else {
 		i, err := strconv.Atoi(word)
 		if err != nil {
-			return Token{Ident: word}
+			return Ident{Name: word}
 		}
-		return Token{Literal: i}
+		return LiteralInt{Int: i}
 	}
 }
 
-func NewSymbol(word string) Token {
+func NewSymbol(word string) Ty {
 	if s, ok := symbol[word]; ok {
-		return Token{Symbol: s}
+		return Symbol{Id: s}
 	} else {
-		return Token{Symbol: ILLEGAL}
+		return Symbol{Id: ILLEGAL}
 	}
+}
+
+func Is(subject, target Ty) bool {
+	switch subject := subject.(type) {
+	case Symbol:
+		switch target := target.(type) {
+		case Symbol:
+			return subject.equal(target)
+		}
+	case Keyword:
+		switch target := target.(type) {
+		case Keyword:
+			return subject.equal(target)
+		}
+	case Ident:
+		switch target := target.(type) {
+		case Ident:
+			return subject.equal(target)
+		}
+	case LiteralInt:
+		switch target := target.(type) {
+		case LiteralInt:
+			return subject.equal(target)
+		}
+	case LiteralString:
+		switch target := target.(type) {
+		case LiteralString:
+			return subject.equal(target)
+		}
+	}
+	return false
 }
